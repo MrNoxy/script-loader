@@ -12,21 +12,51 @@
             text-align: center;
         }
 
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-bar {
+            width: 30%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background-color: black;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .search-bar:focus {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 1);
+        }
+
         .container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 30px;
             padding: 20px;
         }
 
         .panel {
             position: relative;
-            width: 100%;
-            height: 200px;
+            width: 90%;
+            height: 150px;
             border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            background-color: black;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .panel:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 1);
         }
 
         .panel img {
@@ -35,21 +65,11 @@
             object-fit: cover;
         }
 
-        .panel::before {
-            content: "";
-            position: absolute;
-            inset: -10px;
-            background: rgba(255, 0, 0, 0.2);
-            filter: blur(10px);
-            z-index: -1;
-        }
-
         .panel .text {
             position: absolute;
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.6);
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
@@ -60,14 +80,16 @@
     </style>
 </head>
 <body>
-    <h1>Script Loader</h1>
-    <div class="container">
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_1')">
+    <div class="search-container">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search for a script..." onkeyup="filterScripts()">
+    </div>
+    <div class="container" id="scriptContainer">
+        <div class="panel" onclick="loadScript('https://pastebin.com/raw/NY8NfrDa')">
             <img src="image1.jpg" alt="Script 1">
-            <div class="text">Script 1</div>
+            <div class="text">Infinite Yield</div>
         </div>
         <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_2')">
-            <img src="image2.jpg" alt="Script 2">
+            <img src="https://cdn.discordapp.com/attachments/1342101461072482344/1342132741558370388/Picsart_25-02-20_15-56-10-986.jpg?ex=67b88605&is=67b73485&hm=32ac93fff7a2ec23937de248d3c34c7d395aaac48cd48ec88c8b7ab574faf949&" alt="Script 2">
             <div class="text">Script 2</div>
         </div>
         <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_3')">
@@ -78,11 +100,41 @@
             <img src="image4.jpg" alt="Script 4">
             <div class="text">Script 4</div>
         </div>
+        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_5')">
+            <img src="image5.jpg" alt="Script 5">
+            <div class="text">Script 5</div>
+        </div>
+        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_6')">
+            <img src="image6.jpg" alt="Script 6">
+            <div class="text">Script 6</div>
+        </div>
+        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_7')">
+            <img src="image7.jpg" alt="Script 7">
+            <div class="text">Script 7</div>
+        </div>
+        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_8')">
+            <img src="image8.jpg" alt="Script 8">
+            <div class="text">Script 8</div>
+        </div>
     </div>
 
     <script>
         function loadScript(url) {
             window.chrome.webview.postMessage(url);
+        }
+
+        function filterScripts() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let panels = document.querySelectorAll('.panel');
+            
+            panels.forEach(panel => {
+                let text = panel.querySelector('.text').innerText.toLowerCase();
+                if (text.includes(input)) {
+                    panel.style.display = "block";
+                } else {
+                    panel.style.display = "none";
+                }
+            });
         }
     </script>
 </body>
