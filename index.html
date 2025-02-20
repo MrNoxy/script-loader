@@ -6,41 +6,47 @@
     <title>Script Loader</title>
     <style>
         body {
-            background-color: rgb(24, 25, 29);
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
+        background-color: rgb(24, 25, 29);
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding-top: 80px; /* Evită suprapunerea conținutului */
+    }
 
-        .search-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
+    .search-container {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    pointer-events: none; /* Permite interacțiunea cu elementele de sub el */
+}
 
-        .search-bar {
-            width: 30%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            background-color: black;
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-            transition: box-shadow 0.3s ease;
-        }
+.search-bar {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background-color: black;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    transition: box-shadow 0.3s ease;
+    pointer-events: auto; /* Permite utilizatorului să interacționeze cu bara de căutare */
+}
 
-        .search-bar:focus {
-            box-shadow: 0 0 25px rgba(255, 255, 255, 1);
-        }
+    .search-bar:focus {
+        box-shadow: 0 0 25px rgba(255, 255, 255, 1);
+    }
 
-        .container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            padding: 20px;
-        }
+    .container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        padding: 20px;
+    }
 
         .panel {
             position: relative;
