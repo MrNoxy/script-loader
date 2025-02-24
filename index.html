@@ -6,47 +6,49 @@
     <title>Script Loader</title>
     <style>
         body {
-        background-color: rgb(24, 25, 29);
-        color: white;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        padding-top: 80px; /* Evită suprapunerea conținutului */
-    }
+            background-color: rgb(24, 25, 29);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding-top: 80px;
+        }
 
-    .search-container {
-    position: fixed;
-    top: 25px;
-    left: 130px;
-    transform: translateX(-50%);
-    z-index: 1000;
-    pointer-events: none; /* Permite interacțiunea cu elementele de sub el */
-}
+        /* Search Bar */
+        .search-container {
+            position: fixed;
+            top: 25px;
+            left: 130px;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
 
-.search-bar {
-    width: 100%;
-    padding: 10px 15px;
-    border-radius: 20px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    background-color: rgb(31, 31, 39);
-    color: white;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-    transition: box-shadow 0.3s ease;
-    pointer-events: auto; /* Permite utilizatorului să interacționeze cu bara de căutare */
-}
+        .search-bar {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background-color: rgb(31, 31, 39);
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transition: box-shadow 0.3s ease;
+            pointer-events: auto;
+        }
 
-    .search-bar:focus {
-        box-shadow: 0 0 25px rgba(255, 255, 255, 1);
-    }
+        .search-bar:focus {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 1);
+        }
 
-    .container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 30px;
-        padding: 20px;
-    }
+        /* Panels Grid */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            padding: 20px;
+        }
 
         .panel {
             position: relative;
@@ -83,50 +85,122 @@
             font-size: 18px;
             text-shadow: 2px 2px 4px black;
         }
+
+        /* Main Panel (Popup) */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .main-panel {
+            background: rgb(31, 31, 39);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        .main-panel img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .main-panel h2 {
+            margin: 15px 0;
+        }
+
+        /* Buttons Matching Search Bar */
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .main-panel button {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background-color: rgb(31, 31, 39);
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .main-panel button:hover {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 1);
+            transform: scale(1.05);
+        }
+
+        .main-panel button:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
+    <!-- Search Bar -->
     <div class="search-container">
         <input type="text" class="search-bar" id="searchInput" placeholder="Search for a script..." onkeyup="filterScripts()">
     </div>
+
+    <!-- Scripts Grid -->
     <div class="container" id="scriptContainer">
-        <div class="panel" onclick="loadScript('https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt')">
+        <div class="panel" onclick="openMainPanel('Infinite Yield', 'https://i.imgur.com/WM0u5zg.png', 'https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt')">
             <img src="https://i.imgur.com/WM0u5zg.png" alt="Script 1">
             <div class="text">Infinite Yield</div>
         </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/Mmic1tU5')">
+        <div class="panel" onclick="openMainPanel('OWL HUB', 'https://i.imgur.com/ZXzVowq.jpeg', 'https://pastebin.com/raw/Mmic1tU5')">
             <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 2">
             <div class="text">OWL HUB</div>
         </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/RRBd5338')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 3">
-            <div class="text">ROBLOX DOORS KING HUB</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_4')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
-            <div class="text">Script 4</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_5')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 5">
-            <div class="text">Script 5</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_6')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 6">
-            <div class="text">Script 6</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_7')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 7">
-            <div class="text">Script 7</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_8')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 8">
-            <div class="text">Script 8</div>
+    </div>
+
+    <!-- Main Panel (Popup) -->
+    <div class="overlay" id="overlay" onclick="closeMainPanel()">
+        <div class="main-panel" id="mainPanel" onclick="event.stopPropagation();">
+            <img id="scriptImage" src="" alt="Script Image">
+            <h2 id="scriptName">Script Name</h2>
+            <div class="buttons-container">
+                <button onclick="executeScript()">Execute</button>
+                <button onclick="loadInMonaco()">Load in Monaco</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function loadScript(url) {
-            window.chrome.webview.postMessage(url);
+        let currentScriptUrl = "";
+
+        function openMainPanel(name, imageUrl, scriptUrl) {
+            document.getElementById("scriptName").textContent = name;
+            document.getElementById("scriptImage").src = imageUrl;
+            currentScriptUrl = scriptUrl;
+            document.getElementById("overlay").style.display = "flex";
+        }
+
+        function closeMainPanel() {
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function executeScript() {
+            window.chrome.webview.postMessage(currentScriptUrl);
+        }
+
+        function loadInMonaco() {
+            window.chrome.webview.postMessage("monaco:" + currentScriptUrl);
         }
 
         function filterScripts() {
