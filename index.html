@@ -6,51 +6,54 @@
     <title>Script Loader</title>
     <style>
         body {
-        background-color: rgb(24, 25, 29);
-        color: white;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        padding-top: 80px; /* Evită suprapunerea conținutului */
-    }
+            background-color: rgb(24, 25, 29);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding-top: 80px;
+        }
 
-    .search-container {
-    position: fixed;
-    top: 25px;
-    left: 130px;
-    transform: translateX(-50%);
-    z-index: 1000;
-    pointer-events: none; /* Permite interacțiunea cu elementele de sub el */
-}
+        .search-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
 
-.search-bar {
-    width: 100%;
-    padding: 10px 15px;
-    border-radius: 20px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    background-color: rgb(31, 31, 39);
-    color: white;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-    transition: box-shadow 0.3s ease;
-    pointer-events: auto; /* Permite utilizatorului să interacționeze cu bara de căutare */
-}
+        .search-bar {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background-color: rgb(31, 31, 39);
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transition: box-shadow 0.3s ease;
+            pointer-events: auto;
+        }
 
-    .search-bar:focus {
-        box-shadow: 0 0 25px rgba(255, 255, 255, 1);
-    }
+        .search-bar:focus {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 1);
+        }
 
-    .container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 30px;
-        padding: 20px;
-    }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
 
         .panel {
             position: relative;
-            width: 90%;
+            width: 100%;
             height: 150px;
             border-radius: 10px;
             overflow: hidden;
@@ -58,6 +61,10 @@
             background-color: rgb(31, 31, 39);
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .panel:hover {
@@ -89,57 +96,50 @@
     <div class="search-container">
         <input type="text" class="search-bar" id="searchInput" placeholder="Search for a script..." onkeyup="filterScripts()">
     </div>
+    
     <div class="container" id="scriptContainer">
-        <div class="panel" onclick="loadScript('https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt')">
+        <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt">
             <img src="https://i.imgur.com/WM0u5zg.png" alt="Script 1">
             <div class="text">Infinite Yield</div>
         </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/Mmic1tU5')">
+        <div class="panel" data-url="https://pastebin.com/raw/Mmic1tU5">
             <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 2">
             <div class="text">OWL HUB</div>
         </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/RRBd5338')">
+        <div class="panel" data-url="https://pastebin.com/raw/RRBd5338">
             <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 3">
             <div class="text">ROBLOX DOORS KING HUB</div>
         </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_4')">
+        <div class="panel" data-url="https://pastebin.com/raw/your_script_4">
             <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
             <div class="text">Script 4</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_5')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 5">
-            <div class="text">Script 5</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_6')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 6">
-            <div class="text">Script 6</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_7')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 7">
-            <div class="text">Script 7</div>
-        </div>
-        <div class="panel" onclick="loadScript('https://pastebin.com/raw/your_script_8')">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 8">
-            <div class="text">Script 8</div>
         </div>
     </div>
 
     <script>
-        function loadScript(url) {
-            window.chrome.webview.postMessage(url);
-        }
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".panel").forEach(panel => {
+                panel.addEventListener("click", function () {
+                    let url = this.getAttribute("data-url");
+                    if (url) {
+                        console.log("Loading script from:", url);
+                        try {
+                            window.chrome.webview.postMessage(url);
+                        } catch (err) {
+                            console.error("Failed to send message:", err);
+                        }
+                    }
+                });
+            });
+        });
 
         function filterScripts() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             let panels = document.querySelectorAll('.panel');
-            
+
             panels.forEach(panel => {
                 let text = panel.querySelector('.text').innerText.toLowerCase();
-                if (text.includes(input)) {
-                    panel.style.display = "block";
-                } else {
-                    panel.style.display = "none";
-                }
+                panel.style.display = text.includes(input) ? "block" : "none";
             });
         }
     </script>
