@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Script Loader</title>
@@ -11,20 +9,18 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
-            padding-top: 80px;
+            padding-top: 65px;
         }
 
-        .search-container {
-            position: fixed;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            pointer-events: none;
-        }
-
+	.search-container {
+	    position: fixed;
+	    top: 20px;
+	    left: 20px; /* Same left padding as .container */
+	    z-index: 1000;
+	    pointer-events: none;
+	}
         .search-bar {
-            width: 100%;
+            width: 115%;
             max-width: 300px;
             padding: 10px 15px;
             border-radius: 20px;
@@ -33,7 +29,7 @@
             font-size: 16px;
             background-color: rgb(31, 31, 39);
             color: white;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
             transition: box-shadow 0.3s ease;
             pointer-events: auto;
         }
@@ -59,7 +55,7 @@
             overflow: hidden;
             cursor: pointer;
             background-color: rgb(31, 31, 39);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             align-items: center;
@@ -94,23 +90,35 @@
 </head>
 <body>
     <div class="search-container">
-        <input type="text" class="search-bar" id="searchInput" placeholder="Search for a script..." onkeyup="filterScripts()">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search a script..." onkeyup="filterScripts()">
     </div>
     
     <div class="container" id="scriptContainer">
-        <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt">
+        <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt" style="display: block;">
             <img src="https://i.imgur.com/WM0u5zg.png" alt="Script 1">
             <div class="text">Infinite Yield</div>
         </div>
-        <div class="panel" data-url="https://pastebin.com/raw/Mmic1tU5">
+        <div class="panel" data-url="https://pastebin.com/raw/Mmic1tU5" style="display: block;">
             <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 2">
             <div class="text">OWL HUB</div>
         </div>
-        <div class="panel" data-url="https://pastebin.com/raw/RRBd5338">
+        <div class="panel" data-url="https://pastebin.com/raw/RRBd5338" style="display: block;">
             <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 3">
             <div class="text">ROBLOX DOORS KING HUB</div>
         </div>
-        <div class="panel" data-url="https://pastebin.com/raw/your_script_4">
+        
+	<div class="panel" data-url="https://pastebin.com/raw/your_script_4" style="display: block;">
+            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
+            <div class="text">Script 4</div>
+        </div>
+	<div class="panel" data-url="https://pastebin.com/raw/your_script_4" style="display: block;">
+            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
+            <div class="text">Script 4</div>
+        </div>
+	<div class="panel" data-url="https://pastebin.com/raw/your_script_4" style="display: block;">
+            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
+            <div class="text">Script 4</div>
+        </div><div class="panel" data-url="https://pastebin.com/raw/your_script_4" style="display: block;">
             <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
             <div class="text">Script 4</div>
         </div>
@@ -143,5 +151,6 @@
             });
         }
     </script>
-</body>
-</html>
+
+
+</body></html>
