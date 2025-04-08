@@ -1,172 +1,284 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Loader</title>
-    <style>
-        body {
-            background-color: rgb(24, 25, 29);
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding-top: 65px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Script Loader</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      background-color: rgb(24, 25, 29);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding-top: 65px;
+    }
 
-        .search-container {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            pointer-events: none;
-        }
+    .search-container {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+    }
 
-        .search-bar {
-            width: 115%;
-            max-width: 300px;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            background-color: rgb(31, 31, 39);
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-            transition: box-shadow 0.3s ease;
-            pointer-events: auto;
-        }
+    .search-bar {
+      width: 115%;
+      max-width: 300px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background-color: rgb(31, 31, 39);
+      color: white;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+      transition: box-shadow 0.3s ease;
+    }
 
-        .search-bar:focus {
-            box-shadow: 0 0 25px rgba(255, 255, 255, 1);
-        }
+    .search-bar:focus {
+      box-shadow: 0 0 25px rgba(255, 255, 255, 1);
+    }
 
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: auto;
-        }
+    .upload-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      background-color: rgb(31, 31, 39);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    }
 
-        .panel {
-            position: relative;
-            width: 100%;
-            height: 150px;
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            background-color: rgb(31, 31, 39);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
+    .upload-form {
+      display: none;
+      position: fixed;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(31, 31, 39, 0.95);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+      z-index: 1001;
+    }
 
-        .panel:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 1);
-        }
+    .upload-form input {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
 
-        .panel img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .upload-form button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+    }
 
-        .panel .text {
-            width: 100%;
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 18px;
-            text-shadow: 2px 2px 4px black;
-        }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
 
-        /* Fire Glow Effect */
-        @keyframes fireGlow {
-            0% { box-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 0 0 30px rgba(255, 140, 0, 0.6); }
-            25% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.9), 0 0 35px rgba(255, 69, 0, 0.7); }
-            50% { box-shadow: 0 0 25px rgba(255, 69, 0, 1), 0 0 40px rgba(255, 140, 0, 0.8); }
-            75% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.9), 0 0 35px rgba(255, 69, 0, 0.7); }
-            100% { box-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 0 0 30px rgba(255, 140, 0, 0.6); }
-        }
+    .panel {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      background-color: rgb(31, 31, 39);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
 
-        .hot-panel {
-            animation: fireGlow 0.5s infinite alternate ease-in-out;
-        }
-    </style>
+    .panel:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 1);
+    }
+
+    .panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .panel .text {
+      width: 100%;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 18px;
+      text-shadow: 2px 2px 4px black;
+    }
+
+    @keyframes fireGlow {
+      0% { box-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 0 0 30px rgba(255, 140, 0, 0.6); }
+      25% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.9), 0 0 35px rgba(255, 69, 0, 0.7); }
+      50% { box-shadow: 0 0 25px rgba(255, 69, 0, 1), 0 0 40px rgba(255, 140, 0, 0.8); }
+      75% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.9), 0 0 35px rgba(255, 69, 0, 0.7); }
+      100% { box-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 0 0 30px rgba(255, 140, 0, 0.6); }
+    }
+
+    .hot-panel {
+      animation: fireGlow 0.5s infinite alternate ease-in-out;
+    }
+  </style>
 </head>
 <body>
-    <div class="search-container">
-        <input type="text" class="search-bar" id="searchInput" placeholder="Search a script..." onkeyup="filterScripts()">
-    </div>
-    
-    <div class="container" id="scriptContainer">
-        <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt" style="display: block;">
-            <img src="https://i.imgur.com/WM0u5zg.png" alt="Script 1">
-            <div class="text">Infinite Yield</div>
-        </div>
-        <div class="panel" data-hot="true" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BallControlBLR.txt" style="display: block;">
-            <img src="https://i.imgur.com/9qoS5LO.jpg" alt="Script 2">
-            <div class="text">Ball Control BLR</div>
-        </div>
-        <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BLRivalsOP.txt" style="display: block;">
-            <img src="https://i.imgur.com/9qoS5LO.jpg" alt="Script 3">
-            <div class="text">BLRivals OP Script</div>
-        </div>
-        <div class="panel" data-hot="true" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/DoorsAuto" style="display: block;">
-            <img src="https://i.imgur.com/NpCEm92.jpg" alt="Script 4">
-            <div class="text">OP Doors Auto Farm</div>
-        </div>
-        <div class="panel" data-hot="false" data-url="https://pastebin.com/raw/your_script_4" style="display: block;">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
-            <div class="text">-</div>
-        </div>
-        <div class="panel" data-hot="false" data-url="https://pastebin.com/raw/your_script_4" style="display: block;">
-            <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 4">
-            <div class="text">-</div>
-        </div>
-    </div>
+  <div class="search-container">
+    <input type="text" class="search-bar" id="searchInput" placeholder="Search a script..." onkeyup="filterScripts()">
+    <button class="upload-btn" onclick="toggleUploadForm()">Upload</button>
+  </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll(".panel").forEach(panel => {
-                panel.addEventListener("click", function () {
-                    let url = this.getAttribute("data-url");
-                    if (url) {
-                        console.log("Loading script from:", url);
-                        try {
-                            window.chrome.webview.postMessage(url);
-                        } catch (err) {
-                            console.error("Failed to send message:", err);
-                        }
-                    }
-                });
+  <div class="upload-form" id="uploadForm">
+    <input type="text" id="titleInput" placeholder="Title">
+    <input type="text" id="scriptInput" placeholder="Script URL">
+    <input type="text" id="imageInput" placeholder="Image Link">
+    <button onclick="submitScript()">Submit</button>
+  </div>
 
-                // Apply "Hot" effect if specified
-                if (panel.getAttribute("data-hot") === "true") {
-                    panel.classList.add("hot-panel");
-                }
-            });
+  <div class="container" id="scriptContainer">
+    <!-- Manual scripts -->
+    <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt">
+      <img src="https://i.imgur.com/WM0u5zg.png" alt="Script 1">
+      <div class="text">Infinite Yield</div>
+    </div>
+    <div class="panel hot-panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BallControlBLR.txt">
+      <img src="https://i.imgur.com/9qoS5LO.jpg" alt="Script 2">
+      <div class="text">Ball Control BLR</div>
+    </div>
+    <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BLRivalsOP.txt">
+      <img src="https://i.imgur.com/9qoS5LO.jpg" alt="Script 3">
+      <div class="text">BLRivals OP Script</div>
+    </div>
+    <div class="panel hot-panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/DoorsAuto">
+      <img src="https://i.imgur.com/NpCEm92.jpg" alt="Script 4">
+      <div class="text">OP Doors Auto Farm</div>
+    </div>
+    <div class="panel" data-url="https://pastebin.com/raw/your_script_4">
+      <img src="https://i.imgur.com/ZXzVowq.jpeg" alt="Script 5">
+      <div class="text">-</div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCfntkpwE_ZmBmujI8MpuSYulQCXCyu9sM",
+      authDomain: "spaceeasy-scripthub.firebaseapp.com",
+      databaseURL: "https://spaceeasy-scripthub-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "spaceeasy-scripthub",
+      storageBucket: "spaceeasy-scripthub.firebasestorage.app",
+      messagingSenderId: "64540262694",
+      appId: "1:64540262694:web:5e8afbe794c7e0dc9401e7"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function toggleUploadForm() {
+      const form = document.getElementById("uploadForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+
+    function submitScript() {
+      const title = document.getElementById("titleInput").value.trim();
+      const script = document.getElementById("scriptInput").value.trim();
+      const image = document.getElementById("imageInput").value.trim();
+
+      if (title && script && image) {
+        const scriptRef = db.ref("scripts").push();
+        scriptRef.set({
+          title,
+          script,
+          image,
+          hot: false // Change to true manually in database if needed
         });
+        alert("Script uploaded!");
+        document.getElementById("uploadForm").reset();
+        document.getElementById("uploadForm").style.display = "none";
+      } else {
+        alert("Please fill in all fields.");
+      }
+    }
 
-        function filterScripts() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let panels = document.querySelectorAll('.panel');
-
-            panels.forEach(panel => {
-                let text = panel.querySelector('.text').innerText.toLowerCase();
-                panel.style.display = text.includes(input) ? "block" : "none";
-            });
+    function addScriptPanel(title, script, image, isHot) {
+      const panel = document.createElement("div");
+      panel.className = "panel";
+      if (isHot) panel.classList.add("hot-panel");
+      panel.setAttribute("data-url", script);
+      panel.innerHTML = `
+        <img src="${image}" alt="${title}">
+        <div class="text">${title}</div>
+      `;
+      panel.addEventListener("click", function () {
+        try {
+          window.chrome.webview.postMessage(script);
+        } catch (err) {
+          console.error("Failed to send message:", err);
         }
-    </script>
+      });
+      document.getElementById("scriptContainer").appendChild(panel);
+    }
+
+    function loadDatabaseScripts() {
+      db.ref("scripts").on("child_added", (snapshot) => {
+        const data = snapshot.val();
+        addScriptPanel(data.title, data.script, data.image, data.hot);
+      });
+    }
+
+    function filterScripts() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const panels = document.querySelectorAll('.panel');
+
+      panels.forEach(panel => {
+        const text = panel.querySelector('.text')?.innerText.toLowerCase();
+        panel.style.display = text.includes(input) ? "block" : "none";
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".panel").forEach(panel => {
+        panel.addEventListener("click", function () {
+          const url = this.getAttribute("data-url");
+          if (url) {
+            try {
+              window.chrome.webview.postMessage(url);
+            } catch (err) {
+              console.error("WebView error:", err);
+            }
+          }
+        });
+      });
+      loadDatabaseScripts();
+    });
+  </script>
 </body>
 </html>
