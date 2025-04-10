@@ -204,6 +204,7 @@
     <input type="text" id="titleInput" placeholder="Script Title">
     <input type="text" id="scriptInput" placeholder="Script URL (Raw)">
     <input type="text" id="imageInput" placeholder="Image URL">
+    <input type="text" id="hashtagsInput" placeholder="Hashtags (comma separated)">
     <button class="upload-btn" onclick="uploadScript()">Upload Script</button>
   </div>
 
@@ -211,19 +212,19 @@
 
   <div class="container" id="scriptContainer">
     <!-- Static scripts (yours) -->
-    <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt">
+    <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/InfiniteYield.txt" data-hashtags="Universal,Fly,Troll">
       <img src="https://i.imgur.com/WM0u5zg.png" alt="Script 1">
       <div class="text">Infinite Yield</div>
     </div>
-    <div class="panel hot-panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BallControlBLR.txt">
+    <div class="panel hot-panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BallControlBLR.txt" data-hashtags="Blue Lock Rivals,Control">
       <img src="https://i.imgur.com/9qoS5LO.jpg" alt="Script 2">
       <div class="text">Ball Control BLR</div>
     </div>
-    <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BLRivalsOP.txt">
+    <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/BLRivalsOP.txt" data-hashtags="Blue Lock Rivals,OP">
       <img src="https://i.imgur.com/9qoS5LO.jpg" alt="Script 3">
       <div class="text">BLRivals OP Script</div>
     </div>
-    <div class="panel hot-panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/DoorsAuto">
+    <div class="panel" data-url="https://raw.githubusercontent.com/MrNoxy/script-loader/refs/heads/main/Scripts/DoorsAuto" data-hashtags="Auto Farm,Doors">
       <img src="https://i.imgur.com/NpCEm92.jpg" alt="Script 4">
       <div class="text">OP Doors Auto Farm</div>
     </div>
@@ -261,16 +262,19 @@
       const title = document.getElementById("titleInput").value;
       const script = document.getElementById("scriptInput").value;
       const image = document.getElementById("imageInput").value;
-      if (!title || !script || !image) {
+      const hashtags = document.getElementById("hashtagsInput").value.split(',').map(tag => tag.trim().toLowerCase());
+      
+      if (!title || !script || !image || hashtags.length === 0) {
         showNotification("Please fill in all fields", "#e74c3c");
         return;
       }
       const newScriptRef = db.ref("scripts").push();
-      newScriptRef.set({ title, script, image, hot: false })
+      newScriptRef.set({ title, script, image, hashtags, hot: false })
         .then(() => {
           const panel = document.createElement("div");
           panel.className = "panel";
           panel.setAttribute("data-url", script);
+          panel.setAttribute("data-hashtags", hashtags.join(','));
           panel.innerHTML = `<img src="${image}" alt="${title}"><div class="text">${title}</div>`;
           document.getElementById("scriptContainer").appendChild(panel);
           panel.addEventListener("click", panelClickHandler);
@@ -293,27 +297,33 @@
       document.querySelectorAll(".panel").forEach(p => p.addEventListener("click", panelClickHandler));
 
       // Load from Firebase
-      db.ref("scripts").once("value", snapshot => {
-        const data = snapshot.val();
-        if (data) {
-          Object.values(data).forEach(item => {
-            const panel = document.createElement("div");
-            panel.className = "panel";
-            if (item.hot) panel.classList.add("hot-panel");
-            panel.setAttribute("data-url", item.script);
-            panel.innerHTML = `<img src="${item.image}" alt="${item.title}"><div class="text">${item.title}</div>`;
-            panel.addEventListener("click", panelClickHandler);
-            document.getElementById("scriptContainer").appendChild(panel);
-          });
-        }
-      });
+db.ref("scripts").once("value", snapshot => {
+  const data = snapshot.val();
+  if (data) {
+    Object.values(data).forEach(item => {
+      // Ensure hashtags exist and are an array
+      const hashtags = Array.isArray(item.hashtags) ? item.hashtags.join(',') : '';
+      
+      const panel = document.createElement("div");
+      panel.className = "panel";
+      if (item.hot) panel.classList.add("hot-panel");
+      panel.setAttribute("data-url", item.script);
+      panel.setAttribute("data-hashtags", hashtags);
+      panel.innerHTML = `<img src="${item.image}" alt="${item.title}"><div class="text">${item.title}</div>`;
+      panel.addEventListener("click", panelClickHandler);
+      document.getElementById("scriptContainer").appendChild(panel);
+    });
+  }
+});
+
     });
 
     function filterScripts() {
       const input = document.getElementById("searchInput").value.toLowerCase();
       document.querySelectorAll(".panel").forEach(panel => {
         const text = panel.querySelector(".text").innerText.toLowerCase();
-        panel.style.display = text.includes(input) ? "block" : "none";
+        const hashtags = panel.getAttribute("data-hashtags").toLowerCase();
+        panel.style.display = text.includes(input) || hashtags.includes(input) ? "block" : "none";
       });
     }
   </script>
